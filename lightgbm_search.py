@@ -2,13 +2,14 @@
 FOLD_SEED = 3027
 NUM_FOLDS = 5
 VALID_FOLDS = 5
-EARLY_STOP = 200
-TRIALS = 300
+EARLY_STOP = 150
+TRIALS = 5
 SAVE = True
 SUBMIT = True
 
 
 # IMPORTS
+import os
 import numpy as np
 import pandas as pd
 from category_encoders import OrdinalEncoder
@@ -25,8 +26,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Load the training data
-train = pd.read_csv("../data/train.csv")
-test = pd.read_csv("../data/test.csv")
+train = pd.read_csv("data/train.csv")
+test = pd.read_csv("data/test.csv")
 
 # Define Folds
 train["kfold"] = -1
@@ -82,24 +83,31 @@ def score(model_params = {},
 def param_search(trials):
     def objective(trial):
         model_params = {
-            'learning_rate': trial.suggest_float('learning_rate', 0.08, 0.14),
+            'learning_rate': trial.suggest_float('learning_rate', 0.075, 0.11),
             'n_estimators': 30000,
-            'max_depth': trial.suggest_int('max_depth', 2, 4),
-            'num_leaves': trial.suggest_int('num_leaves', 5, 20),
-            'min_child_samples': trial.suggest_int('min_child_samples', 12, 20),
-            'min_child_weight': trial.suggest_float('min_child_weight', 6.7, 7.1),
-            'subsample': trial.suggest_float('subsample', 0.4, 0.5),  
+            'max_depth': trial.suggest_int('max_depth', 2, 3),
+            'num_leaves': trial.suggest_int('num_leaves', 4, 20),
+            'min_child_samples': trial.suggest_int('min_child_samples', 14, 18),
+            'min_child_weight': trial.suggest_float('min_child_weight', 6.9, 7.1),
+            'subsample': trial.suggest_float('subsample', 0.42, 0.46),  
             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 0.2),
-            'reg_lambda': trial.suggest_float('reg_lambda', 56, 61),
-            'reg_alpha': trial.suggest_float('reg_alpha', 38, 41),
-            'max_bin':trial.suggest_int('max_bin', 1300, 1500),
-            'cat_smooth':trial.suggest_float('cat_smooth', 60, 70),
+            'reg_lambda': trial.suggest_float('reg_lambda', 58, 60),
+            'reg_alpha': trial.suggest_float('reg_alpha', 38.5, 40.5),
+            'max_bin':trial.suggest_int('max_bin', 1360, 1420),
+            'cat_smooth':trial.suggest_float('cat_smooth', 62, 71),
             'cat_l2':trial.suggest_float('cat_l2', 77, 85),
     }
         return score(model_params = model_params, verbose = False)
     
     optuna.logging.set_verbosity(optuna.logging.DEBUG)
     study = optuna.create_study(direction="minimize")
+    
+    # retrieve and enqueue old parameters
+    for dirname, _, filenames in os.walk('output'):
+        for i, filename in enumerate(reversed(filenames)):
+            if i >= trials: continue
+            old_study = pickle.load(open(os.path.join(dirname, filename), "rb"))
+            study.enqueue_trial(old_study.best_params)
     study.optimize(objective, n_trials=trials)
     return study
 
@@ -111,7 +119,7 @@ print("\nBest Values:",study.best_params)
 # Save study
 if SAVE:
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    pickle.dump(study, open("../studys/study_lgbm_"+timestr+".p","wb"))
+    pickle.dump(study, open("output/study_lgbm_"+timestr+".p","wb"))
 
 def create_submission(params, submit = False):
     X = train.copy()
@@ -160,6 +168,6 @@ def create_submission(params, submit = False):
     if submit:
         output = pd.DataFrame({'Id': X_test.index,'target': predictions})
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        output.to_csv('../output/submission_lgbm_'+timestr+'.csv', index=False)
+        output.to_csv('submissions/submission_lgbm_'+timestr+'.csv', index=False)
     
 create_submission(study.best_params, submit = SUBMIT)
