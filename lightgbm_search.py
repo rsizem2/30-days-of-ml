@@ -2,8 +2,8 @@
 FOLD_SEED = 3027
 NUM_FOLDS = 5
 VALID_FOLDS = 5
-EARLY_STOP = 150
-TRIALS = 5
+EARLY_STOP = 200
+TRIALS = 150
 SAVE = True
 SUBMIT = True
 
@@ -83,19 +83,22 @@ def score(model_params = {},
 def param_search(trials):
     def objective(trial):
         model_params = {
-            'learning_rate': trial.suggest_float('learning_rate', 0.075, 0.11),
+            'boosting_type': trial.suggest_categorical('boosting_type',['gbdt','dart']),
+            'extra_trees': trial.suggest_categorical('extra_trees',[True,False]),
+            'path_smooth': trial.suggest_float('path_smooth', 0.0, 10),
+            'learning_rate': trial.suggest_loguniform('learning_rate', 0.01, 0.2),
             'n_estimators': 30000,
-            'max_depth': trial.suggest_int('max_depth', 2, 3),
+            'max_depth': trial.suggest_int('max_depth', 2, 6),
             'num_leaves': trial.suggest_int('num_leaves', 4, 20),
-            'min_child_samples': trial.suggest_int('min_child_samples', 14, 18),
-            'min_child_weight': trial.suggest_float('min_child_weight', 6.9, 7.1),
-            'subsample': trial.suggest_float('subsample', 0.42, 0.46),  
-            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 0.2),
-            'reg_lambda': trial.suggest_float('reg_lambda', 58, 60),
-            'reg_alpha': trial.suggest_float('reg_alpha', 38.5, 40.5),
-            'max_bin':trial.suggest_int('max_bin', 1360, 1420),
-            'cat_smooth':trial.suggest_float('cat_smooth', 62, 71),
-            'cat_l2':trial.suggest_float('cat_l2', 77, 85),
+            'min_child_samples': trial.suggest_int('min_child_samples', 2, 30),
+            'min_child_weight': trial.suggest_float('min_child_weight', 0.001, 10),
+            'subsample': trial.suggest_float('subsample', 0.1, 10.0),  
+            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
+            'reg_lambda': trial.suggest_float('reg_lambda', 0, 100),
+            'reg_alpha': trial.suggest_float('reg_alpha', 0, 100),
+            'max_bin':trial.suggest_int('max_bin', 200, 1500),
+            'cat_smooth':trial.suggest_float('cat_smooth', 0, 100),
+            'cat_l2':trial.suggest_float('cat_l2', 0, 100),
     }
         return score(model_params = model_params, verbose = False)
     
