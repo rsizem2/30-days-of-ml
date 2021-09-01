@@ -3,7 +3,7 @@ FOLD_SEED = 3027
 NUM_FOLDS = 5
 VALID_FOLDS = 5
 EARLY_STOP = 200
-TRIALS = 150
+TRIALS = 100
 SAVE = True
 SUBMIT = True
 
@@ -83,7 +83,6 @@ def score(model_params = {},
 def param_search(trials):
     def objective(trial):
         model_params = {
-            'boosting_type': trial.suggest_categorical('boosting_type',['gbdt','dart']),
             'extra_trees': trial.suggest_categorical('extra_trees',[True,False]),
             'path_smooth': trial.suggest_float('path_smooth', 0.0, 10),
             'learning_rate': trial.suggest_loguniform('learning_rate', 0.01, 0.2),
@@ -92,7 +91,7 @@ def param_search(trials):
             'num_leaves': trial.suggest_int('num_leaves', 4, 20),
             'min_child_samples': trial.suggest_int('min_child_samples', 2, 30),
             'min_child_weight': trial.suggest_float('min_child_weight', 0.001, 10),
-            'subsample': trial.suggest_float('subsample', 0.1, 10.0),  
+            'subsample': trial.suggest_float('subsample', 0.1, 1.0),  
             'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 1.0),
             'reg_lambda': trial.suggest_float('reg_lambda', 0, 100),
             'reg_alpha': trial.suggest_float('reg_alpha', 0, 100),
