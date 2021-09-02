@@ -20,8 +20,8 @@ This repository contains my work relating to 30 days of ML which I ran locally r
 
 My final submission involved stacking 4 of my best performing LightGBM models with 2 of my best XGBoost models which is outlined in the `Model Stacking.ipynb` notebook. Unfortunately, I ran out of time and didn't get to explore stacking as much as I would have liked to so my first stacked model was also my last submission but this was still a good learning experience.
 
-* `output` directory - pickled output from optuna and XGBoost predictions downloaded from Kaggle
-* `submissions` directory - final predictions in the correct format
+* `~/output` directory - pickled output from optuna and XGBoost predictions
+* `~/submissions` directory - final predictions in the correct format
 * `lightgbm_search.py` - script for doing a hyperparameter search using optuna
 * `Model Stacking.ipynb` - notebook for stacking XGBoost and LightGBM models
 * `Optuna Visualizations.ipynb` - notebook for evaluating optuna results
