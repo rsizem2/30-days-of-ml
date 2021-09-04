@@ -26,8 +26,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Load the training data
-train = pd.read_csv("data/train.csv")
-test = pd.read_csv("data/test.csv")
+train = pd.read_csv("../data/train.csv")
+test = pd.read_csv("../data/test.csv")
 
 # Define Folds
 train["kfold"] = -1
@@ -121,7 +121,7 @@ print("\nBest Values:",study.best_params)
 # Save study
 if SAVE:
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    pickle.dump(study, open("output/study_lgbm_"+timestr+".p","wb"))
+    pickle.dump(study, open("../output/study_lgbm_"+timestr+".p","wb"))
 
 def create_submission(params, submit = False):
     X = train.copy()
@@ -170,6 +170,6 @@ def create_submission(params, submit = False):
     if submit:
         output = pd.DataFrame({'Id': X_test.index,'target': predictions})
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        output.to_csv('submissions/submission_lgbm_'+timestr+'.csv', index=False)
+        output.to_csv('../submissions/submission_lgbm_'+timestr+'.csv', index=False)
     
 create_submission(study.best_params, submit = SUBMIT)
