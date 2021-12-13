@@ -6,11 +6,7 @@ According to the competition overview, "the dataset used for this competition is
 
 ## The Data
 
-From the competition description: "the feature columns, `cat0 - cat9` are categorical, and the feature columns `cont0 - cont13` are continuous." The continuous valued `target` represents the variable we wish to predict in the test set. We store the raw data in the `~\data` directory
-
-* train.csv - the training data with the `target` column
-* test.csv - the test set
-* sample_submission.csv - a sample submission file in the correct format
+From the competition description: "the feature columns, `cat0 - cat9` are categorical, and the feature columns `cont0 - cont13` are continuous." The continuous valued `target` represents the variable we wish to predict in the test set. We do not include the competition data files with this repository to save space, please download the [competition files](https://www.kaggle.com/c/30-days-of-ml/data) and extract them into `~\data` before running any of these scripts.
 
 ## The Repo
 
